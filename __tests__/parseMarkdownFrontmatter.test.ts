@@ -101,7 +101,7 @@ describe("parseMarkdownFrontmatter", () => {
         expect(() => parseMarkdownFrontmatter(data)).toThrow(
             /Missing required field 'date'/
         );
-    });
+    }); 
 
     test("Fail when authors is missing", () => {
         const data = { title: "Test Title", date: "2025-02-18" };
@@ -114,6 +114,20 @@ describe("parseMarkdownFrontmatter", () => {
         const data = { title: 123, date: "2025-02-18", authors: ["jathurchan"] };
         expect(() => parseMarkdownFrontmatter(data)).toThrow(
             /Expected type 'string'/
+        );
+    });
+
+    test("Fail when title is an empty string", () => {
+        const data = { title: "", date: "2025-02-18", authors: ["jathurchan"] };
+        expect(() => parseMarkdownFrontmatter(data)).toThrow(
+            /title.*cannot be empty/
+        );
+    });
+
+    test("Fail when title contains only whitespace", () => {
+        const data = { title: "   ", date: "2025-02-18", authors: ["jathurchan"] };
+        expect(() => parseMarkdownFrontmatter(data)).toThrow(
+            /title.*cannot.*contain only whitespace/
         );
     });
 
