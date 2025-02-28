@@ -14,7 +14,10 @@ addFormats(ajv);    // Add formats like data and uri
 const frontmatterSchema = {
     type: 'object',
     properties: {
-        title: { type: "string" },
+        title: {
+            type: 'string',
+            pattern: '\\S', // Ensures contains at least 1 non-whitespace character
+        },
         intro: { type: "string" },
         allowTitleToDifferFromFilename: { type: "boolean", default: false },
         date: { type: 'string', format: 'date' },
@@ -69,6 +72,11 @@ export function formatValidationError(error: ErrorObject): string {
         case 'minItems':
             message += `: Array must have at least ${error.params.limit} item(s)`;
             break;
+        case 'pattern':
+            if (error.instancePath === '/title') {
+                message += `: Title cannot be empty or contain only whitespace`;
+                break;
+            }
         default:
             message += ` (Keyword: ${error.keyword})`;
     }
