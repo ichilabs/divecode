@@ -1,6 +1,6 @@
 // utils/parseMarkdownFrontmatter.ts
 
-import Ajv, { ErrorObject } from "ajv";
+import Ajv, { ErrorObject, ValidateFunction } from "ajv";
 import addFormats from "ajv-formats"
 import { Frontmatter } from "../types/frontmatter";
 
@@ -51,7 +51,7 @@ const frontmatterSchema = {
 const validateFrontmatter = ajv.compile<Frontmatter>(frontmatterSchema);
 
 /**
- * Format a single Ajv error.
+ * Format a single validation error.
  */
 export function formatValidationError(error: ErrorObject): string {
     let message = `${error.instancePath} ${error.message}`;
@@ -84,12 +84,18 @@ export function formatValidationError(error: ErrorObject): string {
     return message;
 }
 
+/**
+ * Get formatted validation errors. 
+ */
+export function getValidationErrors(validator: ValidateFunction): string[] {
+    const errors = validateFrontmatter.errors || [];
+    return errors.map(formatValidationError);
+}
+
+
 export function parseMarkdownFrontmatter(data: unknown): Frontmatter {
     if (!validateFrontmatter(data)) {
-        const errors = validateFrontmatter.errors || [];
-
-        const errorMessages = errors.map(formatValidationError);
-
+        const errorMessages = getValidationErrors(validateFrontmatter);
         throw new Error(`Frontmatter validation failed:\n${errorMessages.join('\n')}`);
     }
 

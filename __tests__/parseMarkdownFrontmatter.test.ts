@@ -1,7 +1,7 @@
 // __tests__/parseMarkdownFrontmatter.test.ts
 
-import Ajv, { ErrorObject } from "ajv";
-import { formatValidationError, parseMarkdownFrontmatter } from "../utils/parseMarkdownFrontmatter";
+import Ajv, { ErrorObject, ValidateFunction } from "ajv";
+import { formatValidationError, getValidationErrors, parseMarkdownFrontmatter } from "../utils/parseMarkdownFrontmatter";
 
 describe("formatValidationError", () => {
     test("Show default error message for an unknown keyword", () => {
@@ -18,6 +18,16 @@ describe("formatValidationError", () => {
     });
 });
 
+describe("getValidationErrors", () => {
+    test("Handle validateFrontmatter.errors undefined", () => {
+        const fakeValidator = {
+            errors: undefined
+        } as ValidateFunction;
+    
+        const result = getValidationErrors(fakeValidator);
+        expect(result).toEqual([]);
+    });
+});
 
 describe("parseMarkdownFrontmatter", () => {
 
